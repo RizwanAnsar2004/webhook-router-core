@@ -1,0 +1,22 @@
+[Unit]
+Description=Webhook Router (HyperPay webhook fan-out)
+After=network-online.target redis.service
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=root
+WorkingDirectory=/var/dotnet/webhook-router
+ExecStart=/usr/bin/dotnet /var/dotnet/webhook-router/WebhookRouter.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+TimeoutStopSec=30
+SyslogIdentifier=webhookrouter
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5180
+Environment=DOTNET_NOLOGO=1
+EnvironmentFile=-/etc/webhookrouter/webhookrouter.env
+
+[Install]
+WantedBy=multi-user.target
